@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300" role="img" aria-label="毎日のくり返し作業をAIが処理して時間を生み出すイメージ">
+  <defs>
+    <linearGradient id="ai-core" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ff5f9c"/>
+      <stop offset="1" stop-color="#e0006c"/>
+    </linearGradient>
+    <linearGradient id="ai-tag" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ff5f9c"/>
+      <stop offset="1" stop-color="#e0006c"/>
+    </linearGradient>
+  </defs>
+
+  <!-- ground shadows -->
+  <ellipse cx="92" cy="250" rx="66" ry="13" fill="#16243a" opacity="0.06"/>
+  <ellipse cx="312" cy="250" rx="60" ry="13" fill="#16243a" opacity="0.06"/>
+
+  <!-- LEFT: 手作業の山（重なった書類） -->
+  <g>
+    <rect x="44" y="150" width="96" height="76" rx="9" fill="#ffe2ee"/>
+    <rect x="36" y="132" width="96" height="76" rx="9" fill="#fff" stroke="#16243a" stroke-width="2.5"/>
+    <rect x="32" y="112" width="96" height="76" rx="9" fill="#fff" stroke="#16243a" stroke-width="2.5"/>
+    <g stroke="#c9d2e0" stroke-width="4" stroke-linecap="round">
+      <line x1="44" y1="130" x2="92" y2="130"/>
+      <line x1="44" y1="142" x2="108" y2="142"/>
+      <line x1="44" y1="154" x2="84" y2="154"/>
+    </g>
+    <rect x="44" y="166" width="34" height="12" rx="6" fill="#fff2f7" stroke="#ff2e7e" stroke-width="2"/>
+    <text x="36" y="232" font-family="sans-serif" font-size="10" fill="#5b6b80">毎日の手作業</text>
+  </g>
+
+  <!-- connectors -->
+  <path d="M132 150 C 158 150, 162 150, 184 150" fill="none" stroke="#ff7aab" stroke-width="2.5" stroke-dasharray="2 7" stroke-linecap="round"/>
+  <path d="M250 150 C 272 150, 276 150, 296 150" fill="none" stroke="#ff7aab" stroke-width="2.5" stroke-dasharray="2 7" stroke-linecap="round"/>
+
+  <!-- CENTER: AIコア -->
+  <g transform="translate(200 150)">
+    <circle r="40" fill="url(#ai-core)"/>
+    <circle r="40" fill="none" stroke="#fff" stroke-width="2" opacity="0.5"/>
+    <!-- chip pins -->
+    <g stroke="#ff9cc2" stroke-width="3" stroke-linecap="round">
+      <line x1="-40" y1="-14" x2="-52" y2="-14"/><line x1="-40" y1="0" x2="-52" y2="0"/><line x1="-40" y1="14" x2="-52" y2="14"/>
+      <line x1="40" y1="-14" x2="52" y2="-14"/><line x1="40" y1="0" x2="52" y2="0"/><line x1="40" y1="14" x2="52" y2="14"/>
+    </g>
+    <!-- spark -->
+    <path d="M-2 -20 l6 18 -14 6 16 16 -4 -18 14 -6 z" fill="#fff"/>
+    <text x="-13" y="34" font-family="sans-serif" font-size="13" font-weight="700" fill="#fff">AI</text>
+  </g>
+
+  <!-- RIGHT: 生まれた時間（時計デバイス） -->
+  <g>
+    <rect x="276" y="128" width="76" height="76" rx="14" fill="#ffd3e3"/>
+    <rect x="268" y="112" width="76" height="76" rx="14" fill="#fff" stroke="#16243a" stroke-width="2.5"/>
+    <circle cx="306" cy="150" r="24" fill="#fff2f7" stroke="#ff2e7e" stroke-width="2.5"/>
+    <line x1="306" y1="150" x2="306" y2="135" stroke="#ff2e7e" stroke-width="3" stroke-linecap="round"/>
+    <line x1="306" y1="150" x2="317" y2="156" stroke="#ff2e7e" stroke-width="3" stroke-linecap="round"/>
+    <text x="276" y="232" font-family="sans-serif" font-size="10" fill="#5b6b80">空いた時間</text>
+  </g>
+
+  <!-- floating time-saved tag -->
+  <g transform="translate(298 70)">
+    <rect x="0" y="0" width="86" height="40" rx="10" fill="url(#ai-tag)"/>
+    <path d="M16 40 l10 0 l-10 12 z" fill="#e0006c"/>
+    <text x="11" y="18" font-family="sans-serif" font-size="9" fill="#ffe2ee">月あたり</text>
+    <text x="11" y="33" font-family="sans-serif" font-size="15" font-weight="700" fill="#fff">−42時間</text>
+  </g>
+
+  <!-- sparkles -->
+  <g fill="#ff7aab">
+    <path d="M150 96 l2 6 6 2 -6 2 -2 6 -2 -6 -6 -2 6 -2 z"/>
+    <path d="M244 214 l1.6 4.8 4.8 1.6 -4.8 1.6 -1.6 4.8 -1.6 -4.8 -4.8 -1.6 4.8 -1.6 z"/>
+  </g>
+</svg>
