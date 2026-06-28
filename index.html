@@ -264,6 +264,30 @@
   .final p{margin-top:14px;color:#ffe2ee;font-size:15px}
   .final .cta-main{margin-top:26px}
 
+  /* ===== Booking (final CV) ===== */
+  .book{background:linear-gradient(135deg,#ff5f9c 0%,#e0006c 100%);color:#fff;padding:92px 0}
+  .book .sec-head .en,.book .sec-head .h{color:#fff}
+  .book .sec-head .ja{color:#ffe0ec}
+  .book .sec-head .ja::after{background:rgba(255,255,255,.75)}
+  .book-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:34px;align-items:center;max-width:920px;margin:0 auto}
+  @media(max-width:760px){.book-grid{grid-template-columns:1fr;gap:24px}}
+  .book-benefits{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:12px 16px}
+  @media(max-width:480px){.book-benefits{grid-template-columns:1fr}}
+  .book-benefits li{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:600;color:#fff}
+  .book-benefits li i{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.4);border-radius:50%;width:26px;height:26px;display:grid;place-items:center;font-size:14px;flex:0 0 auto}
+  .book-flow{display:flex;gap:8px;margin-top:24px}
+  .book-flow .bstep{flex:1;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:12px;padding:12px 10px;text-align:center}
+  .book-flow .bstep .n{font-family:"Montserrat";font-weight:800;font-size:12px;color:#ffd8e8;letter-spacing:.04em}
+  .book-flow .bstep .t{font-size:11.5px;margin-top:5px;color:#fff;line-height:1.45}
+  .book-note{margin-top:20px;font-size:13px;color:#ffe2ee;line-height:1.85}
+  .book-card{background:#fff;border-radius:20px;padding:34px 28px;color:var(--ink);box-shadow:0 26px 60px rgba(90,0,45,.32);text-align:center}
+  .book-card .bc-ico{width:58px;height:58px;border-radius:50%;background:var(--pk-bg);color:var(--pk);display:grid;place-items:center;font-size:28px;margin:0 auto 14px}
+  .book-card .bc-ttl{font-size:18px;font-weight:900}
+  .book-card .bc-sub{font-size:13px;color:var(--slate);margin:8px 0 22px}
+  .book-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:linear-gradient(135deg,#ff5f9c,#e0006c);color:#fff;font-weight:800;border-radius:999px;padding:17px;font-size:16px;box-shadow:0 12px 28px rgba(214,0,99,.32);transition:transform .12s,box-shadow .2s}
+  .book-btn:hover{transform:translateY(-2px);box-shadow:0 18px 38px rgba(214,0,99,.45)}
+  .book-micro{font-size:11.5px;color:#9aa9bd;margin-top:14px}
+
   /* Footer */
   footer{background:#13101a;color:#9b94a6;padding:34px 0;font-size:13px}
   footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:14px;align-items:center}
@@ -647,12 +671,40 @@
   </div>
 </section>
 
-<!-- FINAL CTA -->
-<section class="final" id="contact">
+<!-- BOOKING (final CV) -->
+<section class="book" id="contact">
   <div class="wrap">
-    <h2>AIに乗り遅れる前に、<br>まずは御社の“現在地”を知ることから。</h2>
-    <p>無料面談で、御社が「どこからAIを始めるべきか」をはっきりさせましょう。<br>オンライン30分〜・その場での契約は不要です。</p>
-    <a class="cta-main" href="#" data-book><b>無料面談を予約する</b><span>（オンライン30分〜）</span></a>
+    <div class="sec-head">
+      <div class="en">BOOK A MEETING</div>
+      <div class="ja">無料オンライン面談</div>
+      <div class="h">まずは30分、話を聞くだけでもOKです</div>
+    </div>
+    <div class="book-grid">
+      <div class="book-info">
+        <ul class="book-benefits">
+          <li><i class="ti ti-check"></i>相談・診断は完全無料</li>
+          <li><i class="ti ti-check"></i>オンライン30分〜</li>
+          <li><i class="ti ti-check"></i>その場での契約は不要</li>
+          <li><i class="ti ti-check"></i>しつこい営業はしません</li>
+          <li><i class="ti ti-check"></i>準備するものは不要</li>
+          <li><i class="ti ti-check"></i>「検討段階」でもOK</li>
+        </ul>
+        <div class="book-flow">
+          <div class="bstep"><div class="n">STEP 1</div><div class="t">日時を選んで予約</div></div>
+          <div class="bstep"><div class="n">STEP 2</div><div class="t">当日オンラインで面談</div></div>
+          <div class="bstep"><div class="n">STEP 3</div><div class="t">後日プランをご提案</div></div>
+        </div>
+        <p class="book-note">「何から聞けばいいか分からない」状態でも大丈夫です。御社の現状を伺いながら、AIで楽にできそうな業務を一緒に洗い出します。無理な勧誘はいたしません。</p>
+      </div>
+      <div class="book-card">
+        <div class="bc-ico"><i class="ti ti-calendar-check"></i></div>
+        <div class="bc-ttl">空いている日時から選ぶだけ</div>
+        <div class="bc-sub">所要1分・カレンダーから予約できます</div>
+        <!-- ▼ TimeRexのカレンダーをページ内に埋め込む場合：TimeRexの「埋め込みコード（iframe）」をこの位置に貼り、下の<a class="book-btn">を削除してください -->
+        <a class="book-btn" data-book href="#"><i class="ti ti-calendar-check"></i>無料で面談を予約する</a>
+        <p class="book-micro">予約ページ（TimeRex）が開きます</p>
+      </div>
+    </div>
   </div>
 </section>
 
