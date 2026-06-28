@@ -307,6 +307,38 @@
   .voice-metric{display:inline-flex;align-items:center;gap:6px;background:var(--pk-bg);color:var(--pk-d);font-size:11.5px;font-weight:800;border-radius:8px;padding:5px 10px;margin:4px 0 10px}
   .voice-metric i{font-size:14px}
 
+  /* scale step */
+  .scale-q{font-size:13px;font-weight:800;color:var(--ink);margin-bottom:10px}
+  .opt-grid.sm{grid-template-columns:repeat(3,1fr)}
+  @media(max-width:560px){.opt-grid.sm{grid-template-columns:repeat(2,1fr)}}
+  .opt.txt{padding:13px 8px}
+
+  /* ===== Premium upgrade ===== */
+  :root{--gold:#c8a96a}
+  body{font-size:16.5px}
+  .sec{padding:92px 0}
+  .sec-head{margin-bottom:46px}
+  .sec-head .en{letter-spacing:.28em;font-size:18px;color:var(--ink)}
+  .sec-head .ja{position:relative;display:inline-block;padding-bottom:12px}
+  .sec-head .ja::after{content:"";position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:32px;height:2px;background:var(--gold)}
+  .feat{padding:92px 0 52px}
+  .feat .en{letter-spacing:.28em}
+  .dcard,.vs-col,.bench{box-shadow:0 18px 50px rgba(13,20,40,.07)}
+  .pain{box-shadow:0 10px 30px rgba(13,20,40,.04)}
+  .hero .eyebrow{box-shadow:0 2px 12px rgba(0,0,0,.07)}
+
+  /* premium check icon */
+  .pain .ic{border-radius:50%;width:50px;height:50px;flex-basis:50px;background:linear-gradient(135deg,var(--pk-l),var(--pk-d));color:#fff;box-shadow:0 8px 18px rgba(214,0,99,.22)}
+
+  /* premium feature visual tiles */
+  .card .vis{min-height:178px;border-radius:18px;overflow:hidden;background:linear-gradient(140deg,#ff6aa6 0%,#e0006c 100%);padding:0;box-shadow:0 14px 34px rgba(214,0,99,.16)}
+  .card .vis::after{content:"";position:absolute;width:170px;height:170px;border-radius:50%;background:rgba(255,255,255,.10);top:-56px;right:-46px}
+  .card .vis::before{content:"";position:absolute;width:92px;height:92px;border-radius:50%;background:rgba(255,255,255,.08);bottom:-30px;left:-22px}
+  .card .ico-vis{color:#fff;font-size:60px;position:relative;z-index:1}
+  .card .no{color:rgba(255,255,255,.6);z-index:1;top:8px;left:16px}
+  .card .vis-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:2}
+  .card h3{font-size:16.5px}
+
   /* sticky mobile cta */
   .mobcta{position:fixed;left:0;right:0;bottom:0;z-index:60;background:#fff;border-top:1px solid var(--line);padding:10px 14px;display:none;box-shadow:0 -6px 20px rgba(214,0,99,.12)}
   .mobcta a{display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(118deg,#ff5f9c,#e0006c);color:#fff;border-radius:999px;padding:14px;font-weight:700;font-size:14.5px}
@@ -339,11 +371,6 @@
       </div>
       <a class="cta-main" href="#diagnose"><b>無料でAI導入診断を受ける</b><span>（3分・入力不要）</span></a>
       <p class="hero-meta">※ 診断結果の閲覧に個人情報の入力は不要です。</p>
-      <div class="hero-stats">
-        <div class="hs"><b>120<small>社</small></b><span>導入相談実績</span></div>
-        <div class="hs"><b>93<small>%</small></b><span>満足度</span></div>
-        <div class="hs"><b>41<small>h</small></b><span>月あたり平均削減</span></div>
-      </div>
     </div>
 
     <div class="phone">
@@ -371,7 +398,7 @@
       <div class="dcard-body">
         <!-- STEP 1 -->
         <div id="step1">
-          <div class="q-label">STEP 1 / 2</div>
+          <div class="q-label">STEP 1 / 3</div>
           <div class="q-title">御社の業種を選んでください</div>
           <div class="q-help">業種ごとの定型作業の平均ボリュームをもとに試算します。</div>
           <div class="opt-grid" id="industryGrid"></div>
@@ -380,9 +407,23 @@
             <button class="btn-next" id="next1" disabled>次へ進む →</button>
           </div>
         </div>
+        <!-- STEP SCALE -->
+        <div id="stepScale" class="hidden">
+          <div class="q-label">STEP 2 / 3</div>
+          <div class="q-title">御社の規模を教えてください</div>
+          <div class="q-help">削減できる時間・コストを、より御社に近い数字で試算します。</div>
+          <div class="scale-q">従業員数</div>
+          <div class="opt-grid sm" id="empGrid"></div>
+          <div class="scale-q" style="margin-top:20px">年商規模</div>
+          <div class="opt-grid sm" id="revGrid"></div>
+          <div class="dcard-foot">
+            <button class="btn-back" id="backScale">← 戻る</button>
+            <button class="btn-next" id="nextScale" disabled>次へ進む →</button>
+          </div>
+        </div>
         <!-- STEP 2 -->
         <div id="step2" class="hidden">
-          <div class="q-label">STEP 2 / 2</div>
+          <div class="q-label">STEP 3 / 3</div>
           <div class="q-title">いま手作業でやっている作業は？</div>
           <div class="q-help">AIに任せられそうなものを、当てはまるだけタップ（複数選択できます）。</div>
           <div class="task-list" id="taskList"></div>
@@ -451,19 +492,6 @@
   </div>
 </section>
 
-<!-- LOGO WALL（※サンプル：実際の導入企業ロゴに差し替え） -->
-<div class="logos">
-  <p class="logos-lead">さまざまな業種の企業に導入いただいています</p>
-  <div class="logo-row">
-    <div class="logo-box">建設業<br>A社</div>
-    <div class="logo-box">製造業<br>B社</div>
-    <div class="logo-box">卸売業<br>C社</div>
-    <div class="logo-box">サービス業<br>D社</div>
-    <div class="logo-box">小売業<br>E社</div>
-    <div class="logo-box">物流業<br>F社</div>
-  </div>
-</div>
-
 <!-- PAIN -->
 <section class="sec">
   <div class="wrap">
@@ -474,9 +502,9 @@
     </div>
     <div class="pain-grid">
       <div class="pain"><div class="ic"><i class="ti ti-bulb"></i></div><div><h3>AIは気になるが、何から始めればいいか分からない</h3><p>話題なのは分かるけれど、自社で何に・どう使えるのかが見えない。</p></div></div>
-      <div class="pain"><div class="ic"><i class="ti ti-businessplan"></i></div><div><h3>うちの業界・規模でも使えるのか不安</h3><p>「大企業の話でしょ？」と感じている。中小・少人数でも効果が出るのか知りたい。</p></div></div>
-      <div class="pain"><div class="ic"><i class="ti ti-run"></i></div><div><h3>競合に先を越されそうで焦る</h3><p>同業がAIを使い始めたら、価格でもスピードでも置いていかれそう。</p></div></div>
-      <div class="pain"><div class="ic"><i class="ti ti-help-circle"></i></div><div><h3>専門人材もいないし、難しそう</h3><p>社内に詳しい人がいない。導入も運用も自分たちには無理だと思っている。</p></div></div>
+      <div class="pain"><div class="ic"><i class="ti ti-building-skyscraper"></i></div><div><h3>うちの業界・規模でも使えるのか不安</h3><p>「大企業の話でしょ？」と感じている。中小・少人数でも効果が出るのか知りたい。</p></div></div>
+      <div class="pain"><div class="ic"><i class="ti ti-trending-up"></i></div><div><h3>競合に先を越されそうで焦る</h3><p>同業がAIを使い始めたら、価格でもスピードでも置いていかれそう。</p></div></div>
+      <div class="pain"><div class="ic"><i class="ti ti-users-group"></i></div><div><h3>専門人材もいないし、難しそう</h3><p>社内に詳しい人がいない。導入も運用も自分たちには無理だと思っている。</p></div></div>
     </div>
   </div>
 </section>
@@ -564,37 +592,6 @@
       <div class="fstep"><div class="ic"><i class="ti ti-clipboard-check"></i></div><h3>① 無料診断（3分）</h3><p>業種と作業を選ぶだけで、削減できる時間とコストの目安がその場でわかります。</p></div>
       <div class="fstep"><div class="ic"><i class="ti ti-headset"></i></div><h3>② 無料面談でヒアリング</h3><p>オンライン面談で御社の業務を詳しく伺い、AIで何ができるかを一緒に整理します。</p></div>
       <div class="fstep"><div class="ic"><i class="ti ti-rocket"></i></div><h3>③ AI導入・運用伴走</h3><p>合意したプランで導入。浮いた時間を本業に回せるよう、運用まで伴走します。</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- VOICES -->
-<section class="sec">
-  <div class="wrap">
-    <div class="sec-head">
-      <div class="en">VOICES</div>
-      <div class="ja">導入企業の声</div>
-      <div class="h">AI導入で変わった、現場のリアルな声</div>
-    </div>
-    <div class="voices">
-      <div class="voice">
-        <div class="stars">★★★★★</div>
-        <div class="voice-metric"><i class="ti ti-clock"></i>残業 月40h → ほぼ0</div>
-        <p>問い合わせの一次対応をAIに任せたら、事務の残業がほぼゼロに。月40時間以上は浮いた実感があります。</p>
-        <div class="who"><span class="av"><i class="ti ti-user"></i></span><div><b>サービス業・15名</b><small>事務責任者</small></div></div>
-      </div>
-      <div class="voice">
-        <div class="stars">★★★★★</div>
-        <div class="voice-metric"><i class="ti ti-plug-connected"></i>今のExcelのまま導入</div>
-        <p>「うちには難しい」と思っていましたが、今のExcelのまま自動化できたのが驚き。社員の負担も増えませんでした。</p>
-        <div class="who"><span class="av"><i class="ti ti-user"></i></span><div><b>建設業・28名</b><small>代表取締役</small></div></div>
-      </div>
-      <div class="voice">
-        <div class="stars">★★★★☆</div>
-        <div class="voice-metric"><i class="ti ti-file-text"></i>資料作成 1日 → 確認のみ</div>
-        <p>議事録と月次資料の作成をAIに。これまで丸1日かかっていた作業が、ほぼ確認だけで済むようになりました。</p>
-        <div class="who"><span class="av"><i class="ti ti-user"></i></span><div><b>卸売業・9名</b><small>管理部</small></div></div>
-      </div>
     </div>
   </div>
 </section>
@@ -687,7 +684,21 @@
     {id:"collect",name:"情報収集・リスト化",sub:"Web検索・一覧化",hrs:11,auto:.8},
     {id:"check",name:"入力チェック・突合",sub:"ミス確認のダブルチェック",hrs:10,auto:.72}
   ];
-  var state={industry:null,tasks:[]};
+  var EMP=[
+    {id:"e1",name:"1〜5名",f:0.7},
+    {id:"e2",name:"6〜20名",f:1.0},
+    {id:"e3",name:"21〜50名",f:1.7},
+    {id:"e4",name:"51〜100名",f:2.6},
+    {id:"e5",name:"101名以上",f:3.8}
+  ];
+  var REV=[
+    {id:"r1",name:"〜5,000万円"},
+    {id:"r2",name:"5,000万〜1億円"},
+    {id:"r3",name:"1〜5億円"},
+    {id:"r4",name:"5〜10億円"},
+    {id:"r5",name:"10億円以上"}
+  ];
+  var state={industry:null,emp:null,rev:null,tasks:[]};
   var byId=function(i){return document.getElementById(i)};
 
   var ig=byId("industryGrid");
@@ -701,6 +712,22 @@
     });
     ig.appendChild(d);
   });
+
+  // 規模（従業員数・年商）の単一選択ビルダー
+  function buildScale(container, list, key){
+    list.forEach(function(it){
+      var d=document.createElement("div");d.className="opt txt";
+      d.innerHTML='<span class="t">'+it.name+'</span>';
+      d.addEventListener("click",function(){
+        container.querySelectorAll(".opt").forEach(function(o){o.classList.remove("sel")});
+        d.classList.add("sel");state[key]=it.id;
+        byId("nextScale").disabled=!(state.emp&&state.rev);
+      });
+      container.appendChild(d);
+    });
+  }
+  buildScale(byId("empGrid"),EMP,"emp");
+  buildScale(byId("revGrid"),REV,"rev");
 
   var tl=byId("taskList");
   TASKS.forEach(function(t){
@@ -716,12 +743,14 @@
     tl.appendChild(d);
   });
 
-  function show(s){["step1","step2","step3"].forEach(function(x){byId(x).classList.toggle("hidden",x!==s)});byId("diagnose").scrollIntoView({behavior:"smooth",block:"start"});}
-  byId("next1").addEventListener("click",function(){show("step2")});
-  byId("back2").addEventListener("click",function(){show("step1")});
+  function show(s){["step1","stepScale","step2","step3"].forEach(function(x){byId(x).classList.toggle("hidden",x!==s)});byId("diagnose").scrollIntoView({behavior:"smooth",block:"start"});}
+  byId("next1").addEventListener("click",function(){show("stepScale")});
+  byId("backScale").addEventListener("click",function(){show("step1")});
+  byId("nextScale").addEventListener("click",function(){show("step2")});
+  byId("back2").addEventListener("click",function(){show("stepScale")});
   byId("next2").addEventListener("click",function(){calc();show("step3")});
   byId("restart").addEventListener("click",function(){
-    state={industry:state.industry,tasks:[]};
+    state.tasks=[];
     tl.querySelectorAll(".task").forEach(function(o){o.classList.remove("sel")});
     byId("taskCount").textContent="0";byId("next2").disabled=true;show("step1");
   });
@@ -743,7 +772,8 @@
   function calc(){
     var chosen=TASKS.filter(function(t){return state.tasks.indexOf(t.id)>=0});
     var totalHrs=0,w=0;chosen.forEach(function(t){totalHrs+=t.hrs;w+=t.hrs*t.auto});
-    var savedHrs=Math.round(w);
+    var ef=(EMP.filter(function(e){return e.id===state.emp})[0]||{f:1}).f;
+    var savedHrs=Math.round(w*ef);
     var cost=Math.round(savedHrs*2500*12/10000);
     var autoRate=totalHrs>0?w/totalHrs:0;
     var coverage=Math.min(totalHrs/110,1);
