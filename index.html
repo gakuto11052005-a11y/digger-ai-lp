@@ -440,10 +440,7 @@
           <div class="q-title">御社の業種を選んでください</div>
           <div class="q-help">業種ごとの定型作業の平均ボリュームをもとに試算します。</div>
           <div class="opt-grid" id="industryGrid"></div>
-          <div class="dcard-foot">
-            <span class="selnote" id="note1">業種を1つ選択してください</span>
-            <button class="btn-next" id="next1" disabled>次へ進む →</button>
-          </div>
+          <p class="selnote" style="text-align:center;margin-top:14px">業種を選ぶと自動で次に進みます</p>
         </div>
         <!-- STEP SCALE -->
         <div id="stepScale" class="hidden">
@@ -456,7 +453,7 @@
           <div class="opt-grid sm" id="revGrid"></div>
           <div class="dcard-foot">
             <button class="btn-back" id="backScale">← 戻る</button>
-            <button class="btn-next" id="nextScale" disabled>次へ進む →</button>
+            <span class="selnote">2つ選ぶと自動で次へ進みます</span>
           </div>
         </div>
         <!-- STEP 2 -->
@@ -771,8 +768,8 @@
     d.innerHTML='<i class="ti '+it.ico+'"></i><span class="t">'+it.name+'</span>';
     d.addEventListener("click",function(){
       ig.querySelectorAll(".opt").forEach(function(o){o.classList.remove("sel")});
-      d.classList.add("sel");state.industry=it.id;byId("next1").disabled=false;
-      byId("note1").innerHTML='<b style="color:var(--pk-d)">'+it.name+'</b> を選択中';
+      d.classList.add("sel");state.industry=it.id;
+      setTimeout(function(){show("stepScale");},320);
     });
     ig.appendChild(d);
   });
@@ -785,7 +782,7 @@
       d.addEventListener("click",function(){
         container.querySelectorAll(".opt").forEach(function(o){o.classList.remove("sel")});
         d.classList.add("sel");state[key]=it.id;
-        byId("nextScale").disabled=!(state.emp&&state.rev);
+        if(state.emp&&state.rev){setTimeout(function(){show("step2");},320);}
       });
       container.appendChild(d);
     });
@@ -808,9 +805,7 @@
   });
 
   function show(s){["step1","stepScale","step2","step3"].forEach(function(x){byId(x).classList.toggle("hidden",x!==s)});byId("diagnose").scrollIntoView({behavior:"smooth",block:"start"});}
-  byId("next1").addEventListener("click",function(){show("stepScale")});
   byId("backScale").addEventListener("click",function(){show("step1")});
-  byId("nextScale").addEventListener("click",function(){show("step2")});
   byId("back2").addEventListener("click",function(){show("stepScale")});
   byId("next2").addEventListener("click",function(){calc();show("step3")});
   byId("restart").addEventListener("click",function(){
