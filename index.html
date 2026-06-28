@@ -269,7 +269,7 @@
   .book .sec-head .en,.book .sec-head .h{color:#fff}
   .book .sec-head .ja{color:#ffe0ec}
   .book .sec-head .ja::after{background:rgba(255,255,255,.75)}
-  .book-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:34px;align-items:center;max-width:920px;margin:0 auto}
+  .book-grid{display:grid;grid-template-columns:0.92fr 1.08fr;gap:30px;align-items:start;max-width:980px;margin:0 auto}
   @media(max-width:760px){.book-grid{grid-template-columns:1fr;gap:24px}}
   .book-benefits{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:12px 16px}
   @media(max-width:480px){.book-benefits{grid-template-columns:1fr}}
@@ -287,6 +287,10 @@
   .book-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:linear-gradient(135deg,#ff5f9c,#e0006c);color:#fff;font-weight:800;border-radius:999px;padding:17px;font-size:16px;box-shadow:0 12px 28px rgba(214,0,99,.32);transition:transform .12s,box-shadow .2s}
   .book-btn:hover{transform:translateY(-2px);box-shadow:0 18px 38px rgba(214,0,99,.45)}
   .book-micro{font-size:11.5px;color:#9aa9bd;margin-top:14px}
+  .book-embed{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 26px 60px rgba(90,0,45,.32)}
+  .book-embed iframe{width:100%;height:700px;border:0;display:block}
+  @media(max-width:760px){.book-embed iframe{height:760px}}
+  .book-fallback{display:block;text-align:center;margin-top:12px;font-size:12.5px;color:#ffe2ee;text-decoration:underline}
 
   /* Footer */
   footer{background:#13101a;color:#9b94a6;padding:34px 0;font-size:13px}
@@ -640,7 +644,7 @@
     </div>
     <div class="price-card">
       <div class="lab">初回オンライン面談</div>
-      <div class="big">¥0<small> ／ 30分〜</small></div>
+      <div class="big">¥0<small> ／ 約60分</small></div>
       <ul>
         <li><i class="ti ti-check"></i>御社の業務を伺うヒアリング</li>
         <li><i class="ti ti-check"></i>AIに任せられる作業の洗い出し</li>
@@ -677,13 +681,13 @@
     <div class="sec-head">
       <div class="en">BOOK A MEETING</div>
       <div class="ja">無料オンライン面談</div>
-      <div class="h">まずは30分、話を聞くだけでもOKです</div>
+      <div class="h">まずは一度、話を聞くだけでもOKです</div>
     </div>
     <div class="book-grid">
       <div class="book-info">
         <ul class="book-benefits">
           <li><i class="ti ti-check"></i>相談・診断は完全無料</li>
-          <li><i class="ti ti-check"></i>オンライン30分〜</li>
+          <li><i class="ti ti-check"></i>オンライン・約60分</li>
           <li><i class="ti ti-check"></i>その場での契約は不要</li>
           <li><i class="ti ti-check"></i>しつこい営業はしません</li>
           <li><i class="ti ti-check"></i>準備するものは不要</li>
@@ -696,13 +700,11 @@
         </div>
         <p class="book-note">「何から聞けばいいか分からない」状態でも大丈夫です。御社の現状を伺いながら、AIで楽にできそうな業務を一緒に洗い出します。無理な勧誘はいたしません。</p>
       </div>
-      <div class="book-card">
-        <div class="bc-ico"><i class="ti ti-calendar-check"></i></div>
-        <div class="bc-ttl">空いている日時から選ぶだけ</div>
-        <div class="bc-sub">所要1分・カレンダーから予約できます</div>
-        <!-- ▼ TimeRexのカレンダーをページ内に埋め込む場合：TimeRexの「埋め込みコード（iframe）」をこの位置に貼り、下の<a class="book-btn">を削除してください -->
-        <a class="book-btn" data-book href="#"><i class="ti ti-calendar-check"></i>無料で面談を予約する</a>
-        <p class="book-micro">予約ページ（TimeRex）が開きます</p>
+      <div>
+        <div class="book-embed">
+          <iframe src="https://timerex.net/s/digger-llc/2cc3b7e9/embed" title="無料オンライン面談の予約カレンダー" loading="lazy"></iframe>
+        </div>
+        <a class="book-fallback" data-book href="#">カレンダーが表示されない場合はこちら（別ページで予約）</a>
       </div>
     </div>
   </div>
