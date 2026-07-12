@@ -3,6 +3,14 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!-- Google Analytics 4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-31PNJLGYHK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-31PNJLGYHK');
+</script>
 <title>DIGGER AI｜その手作業、AIにまかせませんか？中小企業のための業務効率化AI導入支援</title>
 <meta name="description" content="問い合わせ対応・資料作成・データ集計など、毎日のくり返し作業をAIで自動化。今お使いのツールはそのまま、専門知識ゼロでも導入できる伴走支援。まずは無料のAI活用診断から。" />
 <meta property="og:type" content="website" />
@@ -699,6 +707,12 @@
 
 <script>
 (function(){
+  // ===== GA4 計測ヘルパー =====
+  function track(name, params){ try{ if(window.gtag){ window.gtag('event', name, params||{}); } }catch(e){} }
+  var qs=new URLSearchParams(location.search);
+  var utm={ utm_source:qs.get('utm_source')||'', utm_campaign:qs.get('utm_campaign')||'', utm_content:qs.get('utm_content')||'', ref:qs.get('ref')||'' };
+  var started=false;
+
   var INDUSTRIES=[
     {id:"construction",name:"建設・工事",ico:"ti-tools"},
     {id:"manufacturing",name:"製造",ico:"ti-building-factory-2"},
@@ -746,6 +760,7 @@
     d.addEventListener("click",function(){
       ig.querySelectorAll(".opt").forEach(function(o){o.classList.remove("sel")});
       d.classList.add("sel");state.industry=it.id;
+      if(!started){started=true;track('diagnosis_start',Object.assign({industry:it.id},utm));}
       setTimeout(function(){show("stepScale");},320);
     });
     ig.appendChild(d);
@@ -843,6 +858,7 @@
     var html="";
     rec.forEach(function(t){var r=TASK_REC[t.id];if(!r)return;html+='<div class="rec-item"><div class="ic"><i class="ti '+r.ico+'"></i></div><div><h5>'+r.title+'</h5><p>'+r.desc+'</p></div></div>';});
     byId("recList").innerHTML=html;
+    track('diagnosis_complete',Object.assign({industry:ind,emp:state.emp||'',rev:state.rev||'',tasks:state.tasks.length,score:score,saved_hours:savedHrs},utm));
   }
 
   // ===== 面談予約リンク（TimeRex）=====
@@ -850,6 +866,7 @@
   var BOOK_URL = "https://timerex.net/s/digger-llc/2cc3b7e9";
   Array.prototype.forEach.call(document.querySelectorAll("[data-book]"), function(a){
     a.href = BOOK_URL; a.target = "_blank"; a.rel = "noopener";
+    a.addEventListener("click",function(){track('booking_click',utm);});
   });
 })();
 </script>
