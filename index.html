@@ -708,11 +708,25 @@
 
 <script>
 (function(){
-  // ===== GA4 計測ヘルパー =====
-  function track(name, params){ try{ if(window.gtag){ window.gtag('event', name, params||{}); } }catch(e){} }
   var qs=new URLSearchParams(location.search);
   var LP_ID='ai-d'; // このLPの識別子（LPを増やすたびにここを変える＝集約時の共通キー）
-  var utm={ lp_id:LP_ID, utm_source:qs.get('utm_source')||'', utm_campaign:qs.get('utm_campaign')||'', utm_content:qs.get('utm_content')||'', ref:qs.get('ref')||'' };
+  var PRODUCT_KEY=qs.get('product_key')||'digger-flow';
+  var TEMPLATE_ID=qs.get('template_id')||'digger_ai_d';
+  var SID=sessionStorage.getItem('digger_ai_sid')||('ai-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2));
+  sessionStorage.setItem('digger_ai_sid',SID);
+  var SB_URL='https://ofuyqpolirtjbdfupvii.supabase.co';
+  var SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9mdXlxcG9saXJ0amJkZnVwdmlpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4ODc0NzEsImV4cCI6MjA4OTQ2MzQ3MX0.wRnkfI41UevnnyNzerkO_sU3L0FSjjEbp67K34pvc1s';
+  var utm={ lp_id:LP_ID, utm_source:qs.get('utm_source')||'', utm_medium:qs.get('utm_medium')||'', utm_campaign:qs.get('utm_campaign')||'', utm_content:qs.get('utm_content')||'', ref:qs.get('ref')||'', product_key:PRODUCT_KEY, template_id:TEMPLATE_ID };
+  // GA4と商材別ダッシュボードを同じイベントで更新する。
+  function track(name, params){
+    try{ if(window.gtag){ window.gtag('event', name, params||{}); } }catch(e){}
+    try{
+      var data=Object.assign({},params||{},{product_key:PRODUCT_KEY,template_id:TEMPLATE_ID});
+      var row={session_id:SID,page:'digger-ai-diagnosis',event_type:name,event_data:data,product_key:PRODUCT_KEY,template_id:TEMPLATE_ID,utm_source:utm.utm_source,utm_medium:utm.utm_medium,utm_campaign:utm.utm_campaign,utm_content:utm.utm_content,ref_company_id:/^\d+$/.test(utm.ref)?Number(utm.ref):null,user_agent:navigator.userAgent,screen_width:innerWidth};
+      fetch(SB_URL+'/rest/v1/lp_analytics',{method:'POST',headers:{'Content-Type':'application/json',apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,Prefer:'return=minimal'},body:JSON.stringify([row]),keepalive:true}).catch(function(){});
+    }catch(e){}
+  }
+  track('pageview',utm);
   var started=false;
 
   var INDUSTRIES=[
@@ -867,7 +881,9 @@
   // ↓★ここにTimeRexの予約ページURLを貼るだけで、全「面談予約」ボタンに反映されます
   var BOOK_URL = "https://timerex.net/s/digger-llc/2cc3b7e9";
   Array.prototype.forEach.call(document.querySelectorAll("[data-book]"), function(a){
-    a.href = BOOK_URL; a.target = "_blank"; a.rel = "noopener";
+    var bookingUrl=new URL(BOOK_URL);
+    Object.keys(utm).forEach(function(key){if(utm[key])bookingUrl.searchParams.set(key,utm[key]);});
+    a.href = bookingUrl.toString(); a.target = "_blank"; a.rel = "noopener";
     a.addEventListener("click",function(){track('booking_click',utm);});
   });
 })();
