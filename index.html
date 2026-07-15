@@ -719,7 +719,7 @@
       var p=params||{};
       var row={session_id:_sid,page:'ai',event_type:name,event_data:p,
         utm_source:p.utm_source||null,utm_campaign:p.utm_campaign||null,utm_content:p.utm_content||null,
-        ref_company_id:p.ref||null,user_agent:navigator.userAgent,screen_width:innerWidth,country:null,colo:null,ip:null};
+        ref_company_id:(/^\d+$/.test(p.ref||'')?p.ref:null),user_agent:navigator.userAgent,screen_width:innerWidth,country:null,colo:null,ip:null};
       fetch(SB_URL+'/rest/v1/lp_analytics',{method:'POST',headers:{'Content-Type':'application/json',apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,Prefer:'return=minimal'},body:JSON.stringify([row])}).catch(function(){});
     }catch(e){}
   }
