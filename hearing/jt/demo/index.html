@@ -44,6 +44,7 @@ th,td{border:1px solid #e3e8ef;padding:7px 9px;text-align:left;white-space:nowra
 th{background:#f6f8fb;font-weight:700;color:#5b6b80;font-size:11.5px}
 td.num{text-align:right;font-variant-numeric:tabular-nums}
 tr.total td{background:var(--pk-bg);font-weight:900;color:var(--pk-d)}
+.pend{color:#9aa7b8;font-size:11.5px;background:#f4f6f9;border-radius:5px;padding:2px 7px;white-space:nowrap}
 .meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
 .meta div{background:#f6f8fb;border-radius:8px;padding:9px 11px;font-size:12.5px}
 .meta b{display:block;font-size:10.5px;color:var(--mut);font-weight:700;margin-bottom:2px}
@@ -76,7 +77,7 @@ tr.total td{background:var(--pk-bg);font-weight:900;color:var(--pk-d)}
     <span class="lbl">STEP 2｜自動でできた発注書</span>
     <div class="meta" id="meta"></div>
     <div class="sheet"><table id="tbl"></table></div>
-    <p class="note">※ この表はそのままExcelに出力できます。単価・歩掛りは御社の過去データを学習させることで、実際の数字に合わせられます。</p>
+    <p class="note"><b>※ 単価はあえて空にしています。</b>推測の数字をお見せしても意味がないためです。御社の過去の発注データを読み込ませれば、この欄が御社の単価で自動的に埋まります。歩掛り（1枚あたりの面積・ロス率・人工）も、御社の実際の数字に合わせて調整します。<br>この表はそのままExcelに出力できます。</p>
   </div>
 
   <div class="honest">
@@ -143,19 +144,20 @@ tr.total td{background:var(--pk-bg);font-weight:900;color:var(--pk-d)}
   function build(d){
     var rows=[];
     var W=d.multi?d.areas.filter(function(a){return a>150}).reduce(function(a,b){return a+b},0)||d.wallA:d.wallA;
+    var M='<span class="pend">御社マスタ</span>';
     if(W){
       var boards=Math.ceil(W/3.03*1.05); // 455x3030の標準サイディング＋ロス5%
-      rows.push(['サイディング本体',d.wall,W.toFixed(1)+' ㎡',boards+' 枚','3,180','—']);
-      rows.push(['シーリング材','変成シリコン',Math.ceil(W*0.9)+' m',Math.ceil(W*0.9/6)+' 本','780','—']);
-      rows.push(['金具・スターター','専用金具',W.toFixed(1)+' ㎡',Math.ceil(W*2.2)+' 個','52','—']);
-      rows.push(['ビス・釘','—',W.toFixed(1)+' ㎡',Math.ceil(W/50)+' 箱','2,400','—']);
-      rows.push(['防水シート','透湿防水',Math.ceil(W*1.1)+' ㎡',Math.ceil(W*1.1/50)+' 本','4,200','—']);
+      rows.push(['サイディング本体',d.wall,W.toFixed(1)+' ㎡ ÷ 3.03 × ロス5%',boards+' 枚',M]);
+      rows.push(['シーリング材','変成シリコン',Math.ceil(W*0.9)+' m ÷ 6m/本',Math.ceil(W*0.9/6)+' 本',M]);
+      rows.push(['金具・スターター','専用金具',W.toFixed(1)+' ㎡ × 2.2個/㎡',Math.ceil(W*2.2)+' 個',M]);
+      rows.push(['ビス・釘','—',W.toFixed(1)+' ㎡ ÷ 50㎡/箱',Math.ceil(W/50)+' 箱',M]);
+      rows.push(['防水シート','透湿防水',Math.ceil(W*1.1)+' ㎡ ÷ 50㎡/本',Math.ceil(W*1.1/50)+' 本',M]);
     }
-    if(d.roof) rows.push(['屋根材','ガルバ立平',d.roof.toFixed(1)+' ㎡',Math.ceil(d.roof/0.4)+' 枚','1,850','—']);
-    if(d.soffit) rows.push(['軒天ボード','ケイカル板',d.soffit.toFixed(1)+' ㎡',Math.ceil(d.soffit/1.62)+' 枚','1,380','—']);
-    if(d.gutter) rows.push(['雨樋','一式','—','1 式','—','—']);
+    if(d.roof) rows.push(['屋根材','ガルバ立平',d.roof.toFixed(1)+' ㎡ ÷ 0.4m/枚',Math.ceil(d.roof/0.4)+' 枚',M]);
+    if(d.soffit) rows.push(['軒天ボード','ケイカル板',d.soffit.toFixed(1)+' ㎡ ÷ 1.62㎡/枚',Math.ceil(d.soffit/1.62)+' 枚',M]);
+    if(d.gutter) rows.push(['雨樋','一式','—','1 式',M]);
     var days=W?Math.ceil(W/45):5;
-    rows.push(['【職人手配】','外壁施工',days+' 人工','—','—','—']);
+    rows.push(['【職人手配】','外壁施工',W.toFixed(1)+' ㎡ ÷ 45㎡/人日',days+' 人工','—']);
     return {rows:rows,days:days,W:W};
   }
 
@@ -174,10 +176,10 @@ tr.total td{background:var(--pk-bg);font-weight:900;color:var(--pk-d)}
         '<div><b>外壁仕様</b>'+d.wall+'</div>'+
         '<div><b>着工／工期</b>'+d.start+'　'+d.term+'</div>'+
         '<div><b>拾い出し面積</b>'+(b.W?b.W.toFixed(1)+' ㎡':'—')+'</div>';
-      var h='<tr><th>品目</th><th>仕様</th><th>数量根拠</th><th>発注数</th><th class="num">単価(円)</th><th>備考</th></tr>';
+      var h='<tr><th>品目</th><th>仕様</th><th>数量の根拠（AIが計算）</th><th>発注数</th><th>単価</th></tr>';
       b.rows.forEach(function(r){
         var cls=r[0].indexOf('【')===0?' class="total"':'';
-        h+='<tr'+cls+'><td>'+r[0]+'</td><td>'+r[1]+'</td><td>'+r[2]+'</td><td>'+r[3]+'</td><td class="num">'+r[4]+'</td><td>'+r[5]+'</td></tr>';
+        h+='<tr'+cls+'><td>'+r[0]+'</td><td>'+r[1]+'</td><td>'+r[2]+'</td><td><b>'+r[3]+'</b></td><td>'+r[4]+'</td></tr>';
       });
       byId('tbl').innerHTML=h;
     },900);
