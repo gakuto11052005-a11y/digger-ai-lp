@@ -709,11 +709,33 @@
 <script>
 (function(){
   // ===== GA4 計測ヘルパー =====
-  function track(name, params){ try{ if(window.gtag){ window.gtag('event', name, params||{}); } }catch(e){} }
+  // ===== 計測：GA4 ＋ 自社Supabase（既存LPと同じ lp_analytics）の二重送信 =====
+  var SB_URL='https://ofuyqpolirtjbdfupvii.supabase.co';
+  var SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9mdXlxcG9saXJ0amJkZnVwdmlpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4ODc0NzEsImV4cCI6MjA4OTQ2MzQ3MX0.wRnkfI41UevnnyNzerkO_sU3L0FSjjEbp67K34pvc1s';
+  if(!sessionStorage.getItem('dg_sid'))sessionStorage.setItem('dg_sid',crypto.randomUUID());
+  var _sid=sessionStorage.getItem('dg_sid');
+  function toSupabase(name, params){
+    try{
+      var p=params||{};
+      var row={session_id:_sid,page:'ai',event_type:name,event_data:p,
+        utm_source:p.utm_source||null,utm_campaign:p.utm_campaign||null,utm_content:p.utm_content||null,
+        ref_company_id:p.ref||null,user_agent:navigator.userAgent,screen_width:innerWidth,country:null,colo:null,ip:null};
+      fetch(SB_URL+'/rest/v1/lp_analytics',{method:'POST',headers:{'Content-Type':'application/json',apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,Prefer:'return=minimal'},body:JSON.stringify([row])}).catch(function(){});
+    }catch(e){}
+  }
+  // GA4はAI LP独自の名前、Supabaseは既存ダッシュボードの集計名に合わせる
+  var SB_EVENT_MAP={ diagnosis_start:'diagnose_step', diagnosis_complete:'diagnose_complete', booking_click:'cta_click' };
+  function track(name, params){
+    try{ if(window.gtag){ window.gtag('event', name, params||{}); } }catch(e){}
+    toSupabase(SB_EVENT_MAP[name]||name, params);
+  }
   var qs=new URLSearchParams(location.search);
   var LP_ID='ai-d'; // このLPの識別子（LPを増やすたびにここを変える＝集約時の共通キー）
   var utm={ lp_id:LP_ID, utm_source:qs.get('utm_source')||'', utm_campaign:qs.get('utm_campaign')||'', utm_content:qs.get('utm_content')||'', ref:qs.get('ref')||'' };
   var started=false;
+
+  // 訪問を記録（GA4はconfigで自動送信されるのでSupabaseのみ）
+  toSupabase('pageview', utm);
 
   var INDUSTRIES=[
     {id:"construction",name:"建設・工事",ico:"ti-tools"},
