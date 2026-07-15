@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex,nofollow" />
+<title>依頼文から発注書をつくるデモ｜DIGGER AI</title>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-31PNJLGYHK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('set', { 'lp_id': 'ai-demo-jt' });
+  gtag('config', 'G-31PNJLGYHK');
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Montserrat:wght@700;800&display=swap" rel="stylesheet" />
+<style>
+:root{--pk:#ff2e7e;--pk-d:#e0006c;--pk-bg:#fff2f7;--ink:#16243a;--mut:#5b6b80;--line:#eef1f5}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"Noto Sans JP",sans-serif;color:var(--ink);background:linear-gradient(180deg,#fff 0%,var(--pk-bg) 100%);min-height:100vh}
+.wrap{max-width:680px;margin:0 auto;padding:26px 18px 60px}
+.brand{font-family:Montserrat,sans-serif;font-weight:800;font-size:19px}
+.brand b{color:var(--pk)}
+.tag{display:inline-block;background:var(--pk);color:#fff;font-size:12px;font-weight:700;border-radius:999px;padding:4px 12px;margin:16px 0 10px}
+h1{font-size:23px;font-weight:900;line-height:1.5;margin-bottom:8px}
+h1 span{color:var(--pk)}
+.lead{font-size:14px;color:var(--mut);line-height:1.85;margin-bottom:20px}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:0 6px 24px rgba(22,36,58,.05)}
+.lbl{font-size:12px;font-weight:900;color:var(--pk-d);background:var(--pk-bg);display:inline-block;padding:3px 10px;border-radius:8px;margin-bottom:10px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.chip{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;transition:.15s}
+.chip.on{border-color:var(--pk);background:var(--pk-bg);color:var(--pk-d)}
+textarea{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:12px;font:inherit;font-size:13.5px;line-height:1.8;min-height:150px;resize:vertical;background:#fcfcfd}
+textarea:focus{outline:none;border-color:var(--pk);background:#fff}
+.btn{display:block;width:100%;background:var(--pk);color:#fff;border:none;border-radius:999px;font:inherit;font-size:16px;font-weight:900;padding:15px;cursor:pointer;box-shadow:0 8px 24px rgba(255,46,126,.32);margin-top:12px}
+.btn:disabled{opacity:.5;box-shadow:none;cursor:default}
+.arrow{text-align:center;font-size:24px;color:var(--pk);margin:6px 0}
+#out{display:none}
+.sheet{border:1px solid #d8dee7;border-radius:10px;overflow:auto;background:#fff}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:12.5px}
+th,td{border:1px solid #e3e8ef;padding:7px 9px;text-align:left;white-space:nowrap}
+th{background:#f6f8fb;font-weight:700;color:#5b6b80;font-size:11.5px}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+tr.total td{background:var(--pk-bg);font-weight:900;color:var(--pk-d)}
+.meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.meta div{background:#f6f8fb;border-radius:8px;padding:9px 11px;font-size:12.5px}
+.meta b{display:block;font-size:10.5px;color:var(--mut);font-weight:700;margin-bottom:2px}
+.typing{font-size:13px;color:var(--mut);padding:14px;text-align:center}
+.note{font-size:11.5px;color:#9aa7b8;line-height:1.8;margin-top:10px}
+.cta{display:block;text-align:center;background:#fff;color:var(--pk-d);border:2px solid var(--pk);text-decoration:none;border-radius:999px;font-size:15px;font-weight:900;padding:14px;margin-top:22px}
+.honest{background:#fffdf5;border:1px solid #f2e4c0;border-radius:12px;padding:15px;margin-top:18px}
+.honest h3{font-size:14px;font-weight:900;margin-bottom:6px}
+.honest p{font-size:12.5px;line-height:1.85;color:#5c5340}
+@media(max-width:480px){.meta{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">DIGGER <b>AI</b></div>
+  <span class="tag">株式会社JT 柴田様 向け・ログイン不要</span>
+  <h1>依頼のメッセージから、<br><span>発注書</span>が組み上がるまで。</h1>
+  <p class="lead">ハウスメーカーさまから届く「いつ・どこに・どんな住宅を」という依頼。そこから数量を拾って発注書に手入力する——その部分をAIに任せると、こうなります。<br><b>下のボタンを押すだけ</b>で、実際に動きます。</p>
+
+  <div class="card">
+    <span class="lbl">STEP 1｜届いた依頼（例文を選ぶ／自由に書き換えもOK）</span>
+    <div class="chips" id="chips"></div>
+    <textarea id="src"></textarea>
+    <button class="btn" id="go">この依頼から発注書をつくる</button>
+  </div>
+
+  <div class="arrow" id="arrow" style="display:none">↓</div>
+
+  <div class="card" id="out">
+    <span class="lbl">STEP 2｜自動でできた発注書</span>
+    <div class="meta" id="meta"></div>
+    <div class="sheet"><table id="tbl"></table></div>
+    <p class="note">※ この表はそのままExcelに出力できます。単価・歩掛りは御社の過去データを学習させることで、実際の数字に合わせられます。</p>
+  </div>
+
+  <div class="honest">
+    <h3>正直にお伝えしておきます</h3>
+    <p>このデモは<b>文章から数量と発注内容を組み立てる部分</b>を再現したものです。<b>図面そのものからの拾い出しは、AIでも100%の精度は出せません</b>——8割の下書きをAIが出し、人が確認する形が現実的です。<br>だからこそ弊社は、確実に効く<b>「その後の転記・発注・管理」から始める</b>ことをおすすめしています。</p>
+  </div>
+
+  <a class="cta" href="https://ai.dig-ger.com/hearing/jt/" id="cta">1分の事前アンケートに答える →</a>
+  <p class="note" style="text-align:center">7/21(火) 11:00 Zoomにて、御社の実際の業務で一緒に触ってみましょう。</p>
+</div>
+
+<script>
+(function(){
+  var SB_URL='https://ofuyqpolirtjbdfupvii.supabase.co';
+  var SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9mdXlxcG9saXJ0amJkZnVwdmlpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4ODc0NzEsImV4cCI6MjA4OTQ2MzQ3MX0.wRnkfI41UevnnyNzerkO_sU3L0FSjjEbp67K34pvc1s';
+  if(!sessionStorage.getItem('dg_sid'))sessionStorage.setItem('dg_sid',crypto.randomUUID());
+  var sid=sessionStorage.getItem('dg_sid');
+  function rec(type,data){
+    try{
+      var row={session_id:sid,page:'ai-demo-jt',event_type:type,event_data:data||{},utm_source:'prehearing',utm_campaign:'jt',utm_content:null,ref_company_id:null,user_agent:navigator.userAgent,screen_width:innerWidth,country:null,colo:null,ip:null};
+      fetch(SB_URL+'/rest/v1/lp_analytics',{method:'POST',headers:{'Content-Type':'application/json',apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,Prefer:'return=minimal'},body:JSON.stringify([row])}).catch(function(){});
+    }catch(e){}
+    try{if(window.gtag)gtag('event',type,Object.assign({lp_id:'ai-demo-jt'},data||{}));}catch(e){}
+  }
+  rec('pageview');
+
+  var SAMPLES=[
+    {n:'2階建て・サイディング',t:'お世話になります。\n下記、外壁工事お願いします。\n\n・現場：愛知県小牧市小牧原3丁目\n・建物：木造2階建て 延床118㎡\n・外壁：窯業系サイディング16mm（ニチハ）\n・施工面積：おおよそ215㎡\n・付帯：軒天80㎡、雨樋一式\n・着工：8/4〜 工期3週間ほど\n・図面は別途送ります\n\nよろしくお願いします。'},
+    {n:'平屋・金属サイディング',t:'いつもお世話になっております。\n\n次の物件、外壁と屋根まとめてお願いできますか。\n現場は春日井市。平屋、延床92㎡です。\n外壁は金属サイディング（アイジー工業）で約160㎡、\n屋根はガルバ立平で95㎡くらい。雨樋も一式で。\n\n着工8/18希望、工期は2週間見てます。'},
+    {n:'2棟同時・急ぎ',t:'急ぎで恐れ入ります。\n\n一宮市の現場、2棟同時でお願いしたいです。\nA棟：2階建て 延床105㎡ サイディング 約195㎡\nB棟：2階建て 延床110㎡ サイディング 約205㎡\nどちらも窯業系14mm、軒天・雨樋込みで。\n\n着工は8/25、工期3週間でいけますか？'}
+  ];
+  var byId=function(i){return document.getElementById(i)};
+  var chips=byId('chips');
+  SAMPLES.forEach(function(s,i){
+    var d=document.createElement('div');d.className='chip'+(i===0?' on':'');d.textContent=s.n;
+    d.addEventListener('click',function(){
+      chips.querySelectorAll('.chip').forEach(function(c){c.classList.remove('on')});
+      d.classList.add('on'); byId('src').value=s.t; byId('out').style.display='none'; byId('arrow').style.display='none';
+      rec('demo_sample_switch',{sample:s.n});
+    });
+    chips.appendChild(d);
+  });
+  byId('src').value=SAMPLES[0].t;
+
+  function parse(txt){
+    var g=function(re){var m=txt.match(re);return m?m[1]:null};
+    var addr=g(/現場[：:\s]*([^\n]+)/)||g(/現場は([^\n。]+)/)||'—';
+    var wall=g(/外壁[：:\s]*([^\n]+?)(?:\n|$)/)||g(/外壁は([^\n、。]+)/)||'サイディング';
+    var areas=[];var re=/([0-9]+(?:\.[0-9]+)?)\s*㎡/g,m;
+    while((m=re.exec(txt))!==null)areas.push(parseFloat(m[1]));
+    var floor=null,wallA=null;
+    var fm=txt.match(/延床\s*([0-9.]+)\s*㎡/);if(fm)floor=parseFloat(fm[1]);
+    var wm=txt.match(/(?:施工面積|外壁)[^\n]*?([0-9]{2,4}(?:\.[0-9]+)?)\s*㎡/);if(wm)wallA=parseFloat(wm[1]);
+    if(!wallA){var cand=areas.filter(function(a){return a!==floor&&a>100});wallA=cand[0]||areas[0]||0;}
+    var soffit=null;var sm=txt.match(/軒天\s*([0-9.]+)\s*㎡/);if(sm)soffit=parseFloat(sm[1]);
+    var roof=null;var rm=txt.match(/屋根[^\n]*?([0-9]{2,4}(?:\.[0-9]+)?)\s*㎡/);if(rm)roof=parseFloat(rm[1]);
+    var start=g(/着工[：:\s]*([0-9]+\/[0-9]+)/)||g(/着工は?([0-9]+\/[0-9]+)/)||'—';
+    var term=g(/工期[：:\s]*([^\n、。]+)/)||g(/工期は?([^\n、。]+)/)||'—';
+    var gutter=/雨樋/.test(txt);
+    var multi=/2棟|二棟/.test(txt);
+    return {addr:addr,wall:wall,floor:floor,wallA:wallA,soffit:soffit,roof:roof,start:start,term:term,gutter:gutter,multi:multi,areas:areas};
+  }
+
+  function build(d){
+    var rows=[];
+    var W=d.multi?d.areas.filter(function(a){return a>150}).reduce(function(a,b){return a+b},0)||d.wallA:d.wallA;
+    if(W){
+      var boards=Math.ceil(W/3.03*1.05); // 455x3030の標準サイディング＋ロス5%
+      rows.push(['サイディング本体',d.wall,W.toFixed(1)+' ㎡',boards+' 枚','3,180','—']);
+      rows.push(['シーリング材','変成シリコン',Math.ceil(W*0.9)+' m',Math.ceil(W*0.9/6)+' 本','780','—']);
+      rows.push(['金具・スターター','専用金具',W.toFixed(1)+' ㎡',Math.ceil(W*2.2)+' 個','52','—']);
+      rows.push(['ビス・釘','—',W.toFixed(1)+' ㎡',Math.ceil(W/50)+' 箱','2,400','—']);
+      rows.push(['防水シート','透湿防水',Math.ceil(W*1.1)+' ㎡',Math.ceil(W*1.1/50)+' 本','4,200','—']);
+    }
+    if(d.roof) rows.push(['屋根材','ガルバ立平',d.roof.toFixed(1)+' ㎡',Math.ceil(d.roof/0.4)+' 枚','1,850','—']);
+    if(d.soffit) rows.push(['軒天ボード','ケイカル板',d.soffit.toFixed(1)+' ㎡',Math.ceil(d.soffit/1.62)+' 枚','1,380','—']);
+    if(d.gutter) rows.push(['雨樋','一式','—','1 式','—','—']);
+    var days=W?Math.ceil(W/45):5;
+    rows.push(['【職人手配】','外壁施工',days+' 人工','—','—','—']);
+    return {rows:rows,days:days,W:W};
+  }
+
+  byId('go').addEventListener('click',function(){
+    var txt=byId('src').value;
+    var d=parse(txt), b=build(d);
+    rec('demo_run',{wall_area:b.W,rows:b.rows.length});
+    byId('arrow').style.display='block';
+    byId('out').style.display='block';
+    byId('meta').innerHTML='';
+    byId('tbl').innerHTML='<tr><td class="typing">AIが依頼文を読み取っています…</td></tr>';
+    byId('out').scrollIntoView({behavior:'smooth',block:'start'});
+    setTimeout(function(){
+      byId('meta').innerHTML=
+        '<div><b>現場</b>'+d.addr+'</div>'+
+        '<div><b>外壁仕様</b>'+d.wall+'</div>'+
+        '<div><b>着工／工期</b>'+d.start+'　'+d.term+'</div>'+
+        '<div><b>拾い出し面積</b>'+(b.W?b.W.toFixed(1)+' ㎡':'—')+'</div>';
+      var h='<tr><th>品目</th><th>仕様</th><th>数量根拠</th><th>発注数</th><th class="num">単価(円)</th><th>備考</th></tr>';
+      b.rows.forEach(function(r){
+        var cls=r[0].indexOf('【')===0?' class="total"':'';
+        h+='<tr'+cls+'><td>'+r[0]+'</td><td>'+r[1]+'</td><td>'+r[2]+'</td><td>'+r[3]+'</td><td class="num">'+r[4]+'</td><td>'+r[5]+'</td></tr>';
+      });
+      byId('tbl').innerHTML=h;
+    },900);
+  });
+
+  byId('cta').addEventListener('click',function(){rec('cta_click',{to:'hearing'})});
+})();
+</script>
+</body>
+</html>
