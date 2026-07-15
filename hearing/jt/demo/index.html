@@ -123,8 +123,8 @@ tr.total td{background:var(--pk-bg);font-weight:900;color:var(--pk-d)}
 
   function parse(txt){
     var g=function(re){var m=txt.match(re);return m?m[1]:null};
-    var addr=g(/現場[：:\s]*([^\n]+)/)||g(/現場は([^\n。]+)/)||'—';
-    var wall=g(/外壁[：:]\s*([^\n]+)/)||g(/外壁は\s*([^\n、。]+?)(?:で|、|。|$)/)||g(/((?:窯業系|金属)?サイディング[^\n、。]*)/)||'サイディング';
+    var addr=g(/現場[：:]\s*([^\n]+)/)||g(/現場は\s*([^\n。、]+)/)||g(/([^\n、。\s]{2,12}?)の現場/)||g(/([^\n、。\s]{2,12}?[市区町村])/)||'—';
+    var wall=g(/外壁[：:]\s*([^\n]+)/)||g(/外壁は\s*([^\n、。]+?)(?:で|、|。|$)/)||g(/((?:窯業系|金属)[^\n、。]{0,12})/)||g(/(サイディング)/)||'サイディング';
     var areas=[];var re=/([0-9]+(?:\.[0-9]+)?)\s*㎡/g,m;
     while((m=re.exec(txt))!==null)areas.push(parseFloat(m[1]));
     var floor=null,wallA=null;
@@ -134,7 +134,7 @@ tr.total td{background:var(--pk-bg);font-weight:900;color:var(--pk-d)}
     var soffit=null;var sm=txt.match(/軒天\s*([0-9.]+)\s*㎡/);if(sm)soffit=parseFloat(sm[1]);
     var roof=null;var rm=txt.match(/屋根[^\n]*?([0-9]{2,4}(?:\.[0-9]+)?)\s*㎡/);if(rm)roof=parseFloat(rm[1]);
     var start=g(/着工[：:\s]*([0-9]+\/[0-9]+)/)||g(/着工は?([0-9]+\/[0-9]+)/)||'—';
-    var term=g(/工期[：:\s]*([^\n、。]+)/)||g(/工期は?([^\n、。]+)/)||'—';
+    var term=g(/工期[：:]\s*([^\n、。？]+)/)||g(/工期は?\s*([0-9]+\s*[週かヶケ]?[間月日]?[^\n、。？]{0,4})/)||'—';
     var gutter=/雨樋/.test(txt);
     var multi=/2棟|二棟/.test(txt);
     return {addr:addr,wall:wall,floor:floor,wallA:wallA,soffit:soffit,roof:roof,start:start,term:term,gutter:gutter,multi:multi,areas:areas};
