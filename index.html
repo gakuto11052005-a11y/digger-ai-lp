@@ -685,7 +685,7 @@
       </div>
       <div>
         <div class="book-embed">
-          <iframe src="https://timerex.net/s/digger-llc/2cc3b7e9/embed" title="無料オンライン面談の予約カレンダー" loading="lazy"></iframe>
+          <iframe data-book-frame src="https://timerex.net/s/digger-llc/2cc3b7e9/embed" title="無料オンライン面談の予約カレンダー" loading="lazy"></iframe>
         </div>
         <a class="book-fallback" data-book href="#">カレンダーが表示されない場合はこちら（別ページで予約）</a>
       </div>
@@ -712,7 +712,16 @@
   function track(name, params){ try{ if(window.gtag){ window.gtag('event', name, params||{}); } }catch(e){} }
   var qs=new URLSearchParams(location.search);
   var LP_ID='ai-d'; // このLPの識別子（LPを増やすたびにここを変える＝集約時の共通キー）
-  var utm={ lp_id:LP_ID, utm_source:qs.get('utm_source')||'', utm_campaign:qs.get('utm_campaign')||'', utm_content:qs.get('utm_content')||'', ref:qs.get('ref')||'' };
+  var utm={
+    lp_id:LP_ID,
+    utm_source:qs.get('utm_source')||'',
+    utm_medium:qs.get('utm_medium')||'',
+    utm_campaign:qs.get('utm_campaign')||'',
+    utm_content:qs.get('utm_content')||'',
+    ref:qs.get('ref')||'',
+    product_key:qs.get('product_key')||'digger-flow',
+    template_id:qs.get('template_id')||'digger_ai_d'
+  };
   var started=false;
 
   var INDUSTRIES=[
@@ -866,9 +875,21 @@
   // ===== 面談予約リンク（TimeRex）=====
   // ↓★ここにTimeRexの予約ページURLを貼るだけで、全「面談予約」ボタンに反映されます
   var BOOK_URL = "https://timerex.net/s/digger-llc/2cc3b7e9";
+  function buildBookingUrl(base){
+    var url = new URL(base);
+    ['ref','utm_source','utm_medium','utm_campaign','utm_content','product_key','template_id'].forEach(function(key){
+      if(utm[key]) url.searchParams.set(key, utm[key]);
+    });
+    return url.toString();
+  }
+  var bookingUrl = buildBookingUrl(BOOK_URL);
+  var bookingEmbedUrl = buildBookingUrl(BOOK_URL + "/embed");
+  Array.prototype.forEach.call(document.querySelectorAll("[data-book-frame]"), function(frame){
+    frame.src = bookingEmbedUrl;
+  });
   Array.prototype.forEach.call(document.querySelectorAll("[data-book]"), function(a){
-    a.href = BOOK_URL; a.target = "_blank"; a.rel = "noopener";
-    a.addEventListener("click",function(){track('booking_click',utm);});
+    a.href = bookingUrl; a.target = "_blank"; a.rel = "noopener";
+    a.addEventListener("click",function(){track('booking_click',Object.assign({booking_url:bookingUrl},utm));});
   });
 })();
 </script>
