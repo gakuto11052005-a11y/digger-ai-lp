@@ -124,7 +124,7 @@ tr.total td{background:var(--pk-bg);font-weight:900;color:var(--pk-d)}
   function parse(txt){
     var g=function(re){var m=txt.match(re);return m?m[1]:null};
     var addr=g(/現場[：:\s]*([^\n]+)/)||g(/現場は([^\n。]+)/)||'—';
-    var wall=g(/外壁[：:\s]*([^\n]+?)(?:\n|$)/)||g(/外壁は([^\n、。]+)/)||'サイディング';
+    var wall=g(/外壁[：:]\s*([^\n]+)/)||g(/外壁は\s*([^\n、。]+?)(?:で|、|。|$)/)||g(/((?:窯業系|金属)?サイディング[^\n、。]*)/)||'サイディング';
     var areas=[];var re=/([0-9]+(?:\.[0-9]+)?)\s*㎡/g,m;
     while((m=re.exec(txt))!==null)areas.push(parseFloat(m[1]));
     var floor=null,wallA=null;
