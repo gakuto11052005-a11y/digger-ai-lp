@@ -84,6 +84,12 @@
   /* Phone / device mock */
   .phone{flex:0 0 224px;transform:rotate(7deg)}
   @media(max-width:760px){.phone{display:none}}
+  @media(max-width:560px){
+    .hero{padding:60px 0 112px}
+    .hero .sub{margin-top:12px}
+    .cta-main{display:none}
+    #diagnose{margin-top:-104px}
+  }
   .device{width:224px;background:var(--navy);border:6px solid #eef1f7;border-radius:34px;padding:18px 16px;box-shadow:0 26px 50px rgba(120,0,60,.4)}
   .device .scr-lab{color:#9fb0d6;font-size:11px;letter-spacing:.05em}
   .device .scr-sub{color:#fff;font-size:12px;margin-top:10px}
@@ -736,6 +742,17 @@
 
   // 訪問を記録（GA4はconfigで自動送信されるのでSupabaseのみ）
   toSupabase('pageview', utm);
+
+  // スクロール深度（25/50/75/100%を各1回だけ記録）
+  var _sf={};
+  window.addEventListener('scroll',function(){
+    var h=document.documentElement.scrollHeight-window.innerHeight;
+    if(h<=0)return;
+    var d=Math.round(window.scrollY/h*100);
+    [25,50,75,100].forEach(function(m){
+      if(d>=m&&!_sf[m]){_sf[m]=1;toSupabase('scroll',Object.assign({depth:m},utm));}
+    });
+  },{passive:true});
 
   var INDUSTRIES=[
     {id:"construction",name:"建設・工事",ico:"ti-tools"},
