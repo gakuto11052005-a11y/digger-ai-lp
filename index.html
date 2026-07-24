@@ -691,7 +691,7 @@
       </div>
       <div>
         <div class="book-embed">
-          <iframe src="https://timerex.net/s/digger-llc/2cc3b7e9/embed" title="無料オンライン面談の予約カレンダー" loading="lazy"></iframe>
+          <div id="timerex_calendar" data-url="https://timerex.net/s/digger-llc/2cc3b7e9"></div>
         </div>
         <a class="book-fallback" data-book href="#">カレンダーが表示されない場合はこちら（別ページで予約）</a>
       </div>
@@ -712,6 +712,7 @@
 
 <div class="mobcta"><a href="#diagnose"><i class="ti ti-robot"></i>無料でAI削減診断を受ける</a></div>
 
+<script id="timerex_embed" src="https://asset.timerex.net/js/embed.js"></script>
 <script>
 (function(){
   // ===== GA4 計測ヘルパー =====
@@ -730,14 +731,24 @@
     }catch(e){}
   }
   // GA4はAI LP独自の名前、Supabaseは既存ダッシュボードの集計名に合わせる
-  var SB_EVENT_MAP={ diagnosis_start:'diagnose_step', diagnosis_complete:'diagnose_complete', booking_click:'cta_click' };
+  var SB_EVENT_MAP={ diagnosis_start:'diagnose_step', diagnosis_complete:'diagnose_complete' };
   function track(name, params){
     try{ if(window.gtag){ window.gtag('event', name, params||{}); } }catch(e){}
     toSupabase(SB_EVENT_MAP[name]||name, params);
   }
   var qs=new URLSearchParams(location.search);
   var LP_ID='ai-d'; // このLPの識別子（LPを増やすたびにここを変える＝集約時の共通キー）
-  var utm={ lp_id:LP_ID, utm_source:qs.get('utm_source')||'', utm_campaign:qs.get('utm_campaign')||'', utm_content:qs.get('utm_content')||'', ref:qs.get('ref')||'' };
+  var utm={
+    lp_id:LP_ID,
+    product_key:qs.get('product_key')||'digger-flow',
+    template_id:qs.get('template_id')||'',
+    utm_source:qs.get('utm_source')||'',
+    utm_medium:qs.get('utm_medium')||'',
+    utm_campaign:qs.get('utm_campaign')||'',
+    utm_content:qs.get('utm_content')||'',
+    ref:qs.get('ref')||'',
+    is_test:qs.get('is_test')==='1'
+  };
   var started=false;
 
   // 訪問を記録（GA4はconfigで自動送信されるのでSupabaseのみ）
@@ -902,12 +913,51 @@
     track('diagnosis_complete',Object.assign({industry:ind,emp:state.emp||'',rev:state.rev||'',tasks:state.tasks.length,score:score,saved_hours:savedHrs},utm));
   }
 
-  // ===== 面談予約リンク（TimeRex）=====
-  // ↓★ここにTimeRexの予約ページURLを貼るだけで、全「面談予約」ボタンに反映されます
+  // ===== 面談予約（TimeRex公式Widget + 帰属計測）=====
   var BOOK_URL = "https://timerex.net/s/digger-llc/2cc3b7e9";
+  var bookParams=new URLSearchParams();
+  ['ref','product_key','template_id','utm_source','utm_medium','utm_campaign','utm_content','lp_id'].forEach(function(k){
+    if(utm[k])bookParams.set(k,utm[k]);
+  });
+  var attributedBookUrl=BOOK_URL+(bookParams.toString()?'?'+bookParams.toString():'');
+  var calendar=byId('timerex_calendar');
+  if(calendar)calendar.setAttribute('data-url',attributedBookUrl);
+
+  var bookingOpened=false;
+  function trackBookingOpen(source){
+    if(bookingOpened)return;
+    bookingOpened=true;
+    track('booking_click',Object.assign({provider:'timerex',source:source,timerex_url:BOOK_URL},utm));
+  }
+  function bookingEventId(){
+    var key='dg_booking_complete';
+    try{
+      var previous=JSON.parse(sessionStorage.getItem(key)||'null');
+      if(previous&&previous.id&&Date.now()-previous.at<600000)return previous.id;
+      var id=crypto.randomUUID();
+      sessionStorage.setItem(key,JSON.stringify({id:id,at:Date.now()}));
+      return id;
+    }catch(e){
+      return _sid+'-'+Date.now();
+    }
+  }
+  if(typeof TimerexCalendar==='function'){
+    TimerexCalendar({
+      onFormOpen:function(){trackBookingOpen('widget');},
+      onBookingComplete:function(){
+        var params=Object.assign({
+          provider:'timerex',
+          source:'widget',
+          booking_event_id:bookingEventId(),
+          timerex_url:BOOK_URL
+        },utm);
+        track('booking_complete',params);
+      }
+    });
+  }
   Array.prototype.forEach.call(document.querySelectorAll("[data-book]"), function(a){
-    a.href = BOOK_URL; a.target = "_blank"; a.rel = "noopener";
-    a.addEventListener("click",function(){track('booking_click',utm);});
+    a.href = attributedBookUrl; a.target = "_blank"; a.rel = "noopener";
+    a.addEventListener("click",function(){trackBookingOpen('fallback');});
   });
 })();
 </script>
