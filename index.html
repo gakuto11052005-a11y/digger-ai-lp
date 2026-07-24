@@ -391,6 +391,7 @@
   .pain .pain-tint{position:absolute;inset:0;background:linear-gradient(160deg,rgba(255,46,126,.32),rgba(214,0,99,.55))}
   .pain .pain-body{padding:20px 22px;flex:1}
   @media(max-width:480px){.pain .pain-photo{flex-basis:96px}}
+  @media(max-width:560px){.diag-contact-grid{grid-template-columns:1fr!important}}
 
   /* sticky mobile cta */
   .mobcta{position:fixed;left:0;right:0;bottom:0;z-index:60;background:#fff;border-top:1px solid var(--line);padding:10px 14px;display:none;box-shadow:0 -6px 20px rgba(214,0,99,.12)}
@@ -516,6 +517,20 @@
           <div class="rec">
             <h4>御社で特に効果が出るAI活用</h4>
             <div id="recList"></div>
+          </div>
+
+          <div id="diagnosisContactCard" style="margin:24px 0;padding:24px;border:1px solid #f1c7da;border-radius:16px;background:#fff7fb;box-shadow:0 12px 32px rgba(224,0,108,.08)">
+            <h3 style="margin:0 0 8px;font-size:20px;color:#201821">診断結果を保存して、詳しい相談をする</h3>
+            <p style="margin:0 0 18px;font-size:13px;line-height:1.8;color:#665d65">担当者名とメールアドレスをご入力いただくと、今回の診断結果と御社情報を正しく紐付けて担当者がご案内できます。</p>
+            <div class="diag-contact-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <input id="diagCompany" type="text" autocomplete="organization" placeholder="会社名（任意）" style="width:100%;padding:13px 14px;border:1px solid #d9cbd2;border-radius:9px;background:#fff;font:inherit">
+              <input id="diagContactName" type="text" autocomplete="name" placeholder="担当者名（必須）" style="width:100%;padding:13px 14px;border:1px solid #d9cbd2;border-radius:9px;background:#fff;font:inherit">
+              <input id="diagEmail" type="email" autocomplete="email" placeholder="メールアドレス（必須）" style="width:100%;padding:13px 14px;border:1px solid #d9cbd2;border-radius:9px;background:#fff;font:inherit">
+              <input id="diagPhone" type="tel" autocomplete="tel" placeholder="電話番号（任意）" style="width:100%;padding:13px 14px;border:1px solid #d9cbd2;border-radius:9px;background:#fff;font:inherit">
+            </div>
+            <button id="saveDiagnosisContact" type="button" style="width:100%;margin-top:14px;padding:14px 18px;border:0;border-radius:999px;background:#e0006c;color:#fff;font:inherit;font-weight:800;cursor:pointer">連絡先を保存する</button>
+            <p id="diagnosisContactStatus" style="display:none;margin:12px 0 0;font-size:13px;font-weight:700;line-height:1.6"></p>
+            <p style="margin:10px 0 0;font-size:11px;line-height:1.7;color:#80747c">ご入力内容は診断結果のご案内・ご相談対応にのみ利用します。</p>
           </div>
 
           <div class="res-cta">
@@ -691,7 +706,7 @@
       </div>
       <div>
         <div class="book-embed">
-          <iframe src="https://timerex.net/s/digger-llc/2cc3b7e9/embed" title="無料オンライン面談の予約カレンダー" loading="lazy"></iframe>
+          <div id="timerex_calendar" data-url="https://timerex.net/s/digger-llc/2cc3b7e9"></div>
         </div>
         <a class="book-fallback" data-book href="#">カレンダーが表示されない場合はこちら（別ページで予約）</a>
       </div>
@@ -712,6 +727,7 @@
 
 <div class="mobcta"><a href="#diagnose"><i class="ti ti-robot"></i>無料でAI削減診断を受ける</a></div>
 
+<script id="timerex_embed" src="https://asset.timerex.net/js/embed.js"></script>
 <script>
 (function(){
   // ===== GA4 計測ヘルパー =====
@@ -730,14 +746,24 @@
     }catch(e){}
   }
   // GA4はAI LP独自の名前、Supabaseは既存ダッシュボードの集計名に合わせる
-  var SB_EVENT_MAP={ diagnosis_start:'diagnose_step', diagnosis_complete:'diagnose_complete', booking_click:'cta_click' };
+  var SB_EVENT_MAP={ diagnosis_start:'diagnose_step', diagnosis_complete:'diagnose_complete' };
   function track(name, params){
     try{ if(window.gtag){ window.gtag('event', name, params||{}); } }catch(e){}
     toSupabase(SB_EVENT_MAP[name]||name, params);
   }
   var qs=new URLSearchParams(location.search);
   var LP_ID='ai-d'; // このLPの識別子（LPを増やすたびにここを変える＝集約時の共通キー）
-  var utm={ lp_id:LP_ID, utm_source:qs.get('utm_source')||'', utm_campaign:qs.get('utm_campaign')||'', utm_content:qs.get('utm_content')||'', ref:qs.get('ref')||'' };
+  var utm={
+    lp_id:LP_ID,
+    product_key:qs.get('product_key')||'digger-flow',
+    template_id:qs.get('template_id')||'',
+    utm_source:qs.get('utm_source')||'',
+    utm_medium:qs.get('utm_medium')||'',
+    utm_campaign:qs.get('utm_campaign')||'',
+    utm_content:qs.get('utm_content')||'',
+    ref:qs.get('ref')||'',
+    is_test:qs.get('is_test')==='1'
+  };
   var started=false;
 
   // 訪問を記録（GA4はconfigで自動送信されるのでSupabaseのみ）
@@ -793,6 +819,8 @@
   ];
   var state={industry:null,emp:null,rev:null,tasks:[]};
   var byId=function(i){return document.getElementById(i)};
+  var _lastDiagId=null;
+  var _diagnosisSavePromise=null;
 
   var ig=byId("industryGrid");
   INDUSTRIES.forEach(function(it){
@@ -861,6 +889,98 @@
   };
   var INDUSTRY_AVG={construction:54,manufacturing:52,logistics:57,it:46,food:55,realestate:53,retail:56,service:51,trading:58,medical:49,other:53};
 
+  function showDiagnosisStatus(message,isError){
+    var status=byId("diagnosisContactStatus");
+    if(!status)return;
+    status.style.display="block";
+    status.style.color=isError?"#b91c1c":"#047857";
+    status.textContent=message;
+  }
+
+  async function saveAiDiagnosis(chosen,savedHrs,cost,score,retry){
+    retry=retry||0;
+    var ind=state.industry||"other";
+    var industryName=(INDUSTRIES.filter(function(i){return i.id===ind})[0]||{}).name||"その他";
+    var emp=(EMP.filter(function(e){return e.id===state.emp})[0]||{name:"未回答",f:1});
+    var tasks=chosen.map(function(t){
+      var current=Math.round(t.hrs*emp.f*10)/10;
+      var saved=Math.round(t.hrs*t.auto*emp.f*10)/10;
+      return {name:t.name,currentHours:current,savedHours:saved,pct:Math.round(t.auto*100)};
+    });
+    try{
+      var res=await fetch("https://lp.dig-ger.com/api/diagnosis-submit",{
+        method:"POST",
+        keepalive:true,
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+          session_id:_sid,
+          page:"ai",
+          product_key:"digger-flow",
+          industry:industryName,
+          company_size:emp.name,
+          tasks:tasks,
+          result_hours_saved:savedHrs,
+          result_cost_saved:cost,
+          score:score,
+          score_rank:score>=80?"A":score>=60?"B":score>=40?"C":score>=20?"D":"E",
+          ref_company_id:utm.ref||null,
+          utm_source:utm.utm_source||null,
+          utm_campaign:utm.utm_campaign||null,
+          utm_content:utm.utm_content||null
+        })
+      });
+      if(!res.ok)throw new Error("status "+res.status);
+      var data=await res.json();
+      if(!data||!data.id)throw new Error("missing diagnosis id");
+      _lastDiagId=data.id;
+      return data.id;
+    }catch(e){
+      if(retry<2){
+        await new Promise(function(resolve){setTimeout(resolve,500*Math.pow(2,retry));});
+        return saveAiDiagnosis(chosen,savedHrs,cost,score,retry+1);
+      }
+      showDiagnosisStatus("診断結果を保存できませんでした。通信環境を確認して、もう一度診断してください。",true);
+      throw e;
+    }
+  }
+
+  async function saveDiagnosisContact(){
+    var name=byId("diagContactName").value.trim();
+    var email=byId("diagEmail").value.trim();
+    var company=byId("diagCompany").value.trim();
+    var phone=byId("diagPhone").value.trim();
+    if(!name){byId("diagContactName").focus();showDiagnosisStatus("担当者名を入力してください。",true);return;}
+    if(!email||!byId("diagEmail").checkValidity()){byId("diagEmail").focus();showDiagnosisStatus("有効なメールアドレスを入力してください。",true);return;}
+    var button=byId("saveDiagnosisContact");
+    button.disabled=true;
+    button.textContent="保存中...";
+    try{
+      if(_diagnosisSavePromise)await _diagnosisSavePromise;
+      if(!_lastDiagId)throw new Error("diagnosis not saved");
+      var res=await fetch("https://lp.dig-ger.com/api/diagnosis-submit",{
+        method:"PATCH",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+          diagnosis_id:_lastDiagId,
+          session_id:_sid,
+          contact_name:name,
+          email:email,
+          company_name:company,
+          phone:phone
+        })
+      });
+      if(!res.ok)throw new Error("status "+res.status);
+      showDiagnosisStatus("連絡先を保存しました。担当者よりご案内します。",false);
+      button.textContent="保存しました";
+      track("lead_gate_submit",Object.assign({has_email:true,has_phone:!!phone},utm));
+    }catch(e){
+      button.disabled=false;
+      button.textContent="連絡先を保存する";
+      showDiagnosisStatus("連絡先を保存できませんでした。少し時間をおいて、もう一度お試しください。",true);
+    }
+  }
+  byId("saveDiagnosisContact").addEventListener("click",saveDiagnosisContact);
+
   function calc(){
     var chosen=TASKS.filter(function(t){return state.tasks.indexOf(t.id)>=0});
     var totalHrs=0,w=0;chosen.forEach(function(t){totalHrs+=t.hrs;w+=t.hrs*t.auto});
@@ -900,14 +1020,54 @@
     rec.forEach(function(t){var r=TASK_REC[t.id];if(!r)return;html+='<div class="rec-item"><div class="ic"><i class="ti '+r.ico+'"></i></div><div><h5>'+r.title+'</h5><p>'+r.desc+'</p></div></div>';});
     byId("recList").innerHTML=html;
     track('diagnosis_complete',Object.assign({industry:ind,emp:state.emp||'',rev:state.rev||'',tasks:state.tasks.length,score:score,saved_hours:savedHrs},utm));
+    _diagnosisSavePromise=saveAiDiagnosis(chosen,savedHrs,cost,score).catch(function(){return null;});
   }
 
-  // ===== 面談予約リンク（TimeRex）=====
-  // ↓★ここにTimeRexの予約ページURLを貼るだけで、全「面談予約」ボタンに反映されます
+  // ===== 面談予約（TimeRex公式Widget + 帰属計測）=====
   var BOOK_URL = "https://timerex.net/s/digger-llc/2cc3b7e9";
+  var bookParams=new URLSearchParams();
+  ['ref','product_key','template_id','utm_source','utm_medium','utm_campaign','utm_content','lp_id'].forEach(function(k){
+    if(utm[k])bookParams.set(k,utm[k]);
+  });
+  var attributedBookUrl=BOOK_URL+(bookParams.toString()?'?'+bookParams.toString():'');
+  var calendar=byId('timerex_calendar');
+  if(calendar)calendar.setAttribute('data-url',attributedBookUrl);
+
+  var bookingOpened=false;
+  function trackBookingOpen(source){
+    if(bookingOpened)return;
+    bookingOpened=true;
+    track('booking_click',Object.assign({provider:'timerex',source:source,timerex_url:BOOK_URL},utm));
+  }
+  function bookingEventId(){
+    var key='dg_booking_complete';
+    try{
+      var previous=JSON.parse(sessionStorage.getItem(key)||'null');
+      if(previous&&previous.id&&Date.now()-previous.at<600000)return previous.id;
+      var id=crypto.randomUUID();
+      sessionStorage.setItem(key,JSON.stringify({id:id,at:Date.now()}));
+      return id;
+    }catch(e){
+      return _sid+'-'+Date.now();
+    }
+  }
+  if(typeof TimerexCalendar==='function'){
+    TimerexCalendar({
+      onFormOpen:function(){trackBookingOpen('widget');},
+      onBookingComplete:function(){
+        var params=Object.assign({
+          provider:'timerex',
+          source:'widget',
+          booking_event_id:bookingEventId(),
+          timerex_url:BOOK_URL
+        },utm);
+        track('booking_complete',params);
+      }
+    });
+  }
   Array.prototype.forEach.call(document.querySelectorAll("[data-book]"), function(a){
-    a.href = BOOK_URL; a.target = "_blank"; a.rel = "noopener";
-    a.addEventListener("click",function(){track('booking_click',utm);});
+    a.href = attributedBookUrl; a.target = "_blank"; a.rel = "noopener";
+    a.addEventListener("click",function(){trackBookingOpen('fallback');});
   });
 })();
 </script>
